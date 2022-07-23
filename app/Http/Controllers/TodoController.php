@@ -16,7 +16,7 @@ class TodoController extends Controller
     {
         $user = auth()->user();
 
-        $todos = Todo::where('user_id', $user->id)->get();
+        $todos = Todo::where('user_id', $user->id)->where('is_complete', 0)->get();
 
         return view('dashboard', compact('user', 'todos'));
     }
@@ -62,7 +62,7 @@ class TodoController extends Controller
 
             // Verificar se TODO é do usuário
             if ($todo->user_id !== $user->id) {
-                return response('', 403);
+                return response('/dashboard', 403);
             }
 
             $todo->update(['is_complete' => true]);
@@ -83,8 +83,9 @@ class TodoController extends Controller
     public function destroy(Todo $todo)
     {
         try {
+            $user = auth()->user();
             // Verificar se TODO é do usuário
-            if ($todo->user_id !== $user->id) {
+            if ($todo->user_id !== $user->id ) {
                 return response('', 403);
             }
 
